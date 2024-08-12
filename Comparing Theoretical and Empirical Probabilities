@@ -1,0 +1,40 @@
+import random
+import pandas as pd
+
+def dice():
+    return random.randint(1, 6)
+
+def attack(number_of_dice):
+    return sum(dice() for _ in range(number_of_dice))
+
+def battle(number_of_dice, enemy_armour):
+    return attack(number_of_dice) > enemy_armour
+
+def battle_1():
+    return battle(2, 8)
+
+def battle_2():
+    return battle(3, 12)
+
+def empiric_prob(experiment, n=10000):
+    wins = sum(1 for _ in range(n) if experiment())
+    return wins / n
+
+amount = 0
+count = 0
+for x in range(1, 7):
+    for y in range(1, 7):
+        if x + y > 8:
+            amount += 1
+        count += 1
+
+times = [10000, 100000, 1000000, 10000000]
+experiments = []
+
+for n in times:
+    empirical = empiric_prob(battle_1, n)
+    theoretical = amount / count
+    experiments.append({'n': n, 'Empirical': empirical, 'Theoretical': theoretical, 'Difference': abs(empirical - theoretical)})
+
+df = pd.DataFrame(experiments)
+print(df)
